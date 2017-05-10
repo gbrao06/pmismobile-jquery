@@ -1,0 +1,48 @@
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+        renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="MailBox">
+	<style>
+                .th-groups th {
+                        text-align: center;
+                        background-color: rgba(0,0,0,.1);
+                        border-right: 1px solid #fff;
+                }
+                .ui-li-custom .ui-li-count {
+                        right: 10px !important;
+                        background-color: rgba(0,1,0,.1);
+                }                
+        		
+        </style>        	
+        <pm:view id="MailBox" >
+          
+        <pm:header title="MailBox" swatch="b" style="background-color: red;color:black">
+        <f:facet name="right">
+                    <p:commandButton value="Projects" icon="gear" action="mprojects" />
+                </f:facet>
+        <f:facet name="left">
+                    <p:commandButton value="Teams" icon="gear" action="mteams" />
+                </f:facet>
+        
+         </pm:header>
+        <pm:content>
+        <h:form >                
+	   
+        <p:commandButton  value="Inbox" action="mreceivedmessages"/>
+		<p:commandButton  value="Sent Items" action="msentmessages"/>
+		<p:commandButton  value="Send Peer Message" action="msendmessage"/>
+		
+		 <f:facet name="header">
+		 </f:facet>
+		 </h:form>
+	          </pm:content>
+	          </pm:view>
+	          </pm:page>  
+</f:view>

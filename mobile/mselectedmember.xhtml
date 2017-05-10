@@ -1,0 +1,66 @@
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+        renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="#{PeerMessageWebBean.newWrapper.getReceiver()}">
+	<style>
+                .th-groups th {
+                        text-align: center;
+                        background-color: rgba(0,0,0,.1);
+                        border-right: 1px solid #fff;
+                }
+                .ui-li-custom .ui-li-count {
+                        right: 10px !important;
+                        
+                }                
+                
+                
+        </style>        	
+        <pm:view id="#{PeerMessageWebBean.newWrapper.getReceiver()}" >
+         <pm:content>
+        <pm:header title="#{PeerMessageWebBean.newWrapper.getReceiver()}" swatch="b" style="background-color: red;color:black">
+        <f:facet name="right">
+                    <p:commandButton value="Teams" icon="gear" action="mteams" />
+                </f:facet>
+         <f:facet name="left">
+                    <p:commandButton value="Mail Box" icon="gear" action="mmessages" />
+                </f:facet>
+        
+         </pm:header>       
+         <h:form id="selectedTeamMemberForm">
+    			
+			<p:messages id="sendPeerMsg" showDetail="true" life="3000" />  
+
+	   	 <h:outputText value="Suggested DocumentID:" ></h:outputText>
+	   	 <h:outputText value="#{FileUploadWebBean.createDocumentID()}" style="background-color:#2F4F4F;color:white"></h:outputText>
+    	 <h:inputText type="number" value="#{FileUploadWebBean.docId}" ></h:inputText>
+    	<pm:buttonGroup orientation="horizontal">
+    	<p:fileUpload fileUploadListener="#{FileUploadWebBean.file}" mode="advanced" update="uploadedFile" sizeLimit="100000" description="Select File"/>
+  	    </pm:buttonGroup>
+  	    <h:outputText value="Selected File Name:"></h:outputText>
+  	    <h:outputText id="uploadedFile" value="#{FileUploadWebBean.getFileName()}" style="background-color:#2F4F4F;color:white"></h:outputText>
+  	    
+	   <h:panelGrid columns="1">
+    	  <h:outputText value="Message:"></h:outputText>  
+        </h:panelGrid>
+        
+        <h:inputTextarea cols="20" rows="15" value="#{PeerMessageWebBean.newWrapper.message}"/>  
+		     	<p:commandButton id="msgButton" value="Send Message" update="sendPeerMsg" 
+                    actionListener="#{FileUploadWebBean.upload}"   
+                    action="#{PeerMessageWebBean.newWrapper.sendPeerMessage(FileUploadWebBean.docId)}" ajax="false">
+             	</p:commandButton>              	
+    
+	    
+          </h:form>
+            </pm:content>
+                  </pm:view>
+	          </pm:page>  
+</f:view>
+
+

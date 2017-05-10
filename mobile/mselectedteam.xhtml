@@ -1,0 +1,76 @@
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+        renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="SelectedTeam">
+	<style>
+                .th-groups th {
+                        text-align: center;
+                        background-color: rgba(0,0,0,.1);
+                        border-right: 1px solid #fff;
+                }
+                .ui-li-custom .ui-li-count {
+                        right: 10px !important;
+                        
+                }                
+                
+        </style>        	
+        <pm:view id="SelectedTeam" >
+         <pm:content>
+        <pm:header title="#{TeamWebBean.getSelectedTeamName()}" swatch="b" style="background-color: red;color:black">
+        <f:facet name="right">
+                    <p:commandButton value="New Member" icon="gear" action="maddteammember" />
+                </f:facet>
+        <f:facet name="left">
+                    <p:commandButton value="Teams" icon="gear" action="mteams" />
+                </f:facet>
+        
+         </pm:header>       
+         <h:form id="selectedTeamForm">
+      
+     <p:panel header="Create New Blog">
+ 		
+ 		      <p:messages id="addBlogMsg" showDetail="true" life="3000" />  
+      
+ 		<h:outputText value="Blog Name :"></h:outputText>
+	        
+	        <p:inputText value="#{TopicWebBean.newWrapper.topicName}"></p:inputText>
+	            
+			<p:commandButton id="addTopicButton" value="Create New Blog" update="addBlogMsg"  actionListener="#{TopicWebBean.newWrapper.setTeamName(TeamWebBean.getSelectedTeamName())}" action="#{TopicWebBean.newWrapper.addNewBlog}"/>              	            	
+ 		    
+     </p:panel>
+    
+     <p:panel header="Old Blogs">
+ 	
+     <p:dataList id="dt1" value="#{TeamWebBean.getSelectedTeam().getTopictbls()}"
+	  paginator="true" var="item" bgcolor="#F1F1F1" boarder="0" cellspacing="2"
+	  width="80%" rules="all" editable="true" rowKey="#{item.id}" selection="#{TopicWebBean.selectedTopicTbl}" selectionMode="single">
+	  
+		   <f:attribute name="filter" value="true" />
+                        <f:attribute name="placeholder" value="Search" />
+                        <f:attribute name="autoDividers" value="true" />
+                        <f:attribute name="icon" value="grid" />
+                        <f:attribute name="iconSplit" value="true" />      
+     
+         <p:commandButton actionListener="#{TopicWebBean.setSelectedTopicTbl(item)}" value="#{item.topicName}" action="mselectedchat"/>
+	 	 		
+       </p:dataList>   
+    	</p:panel>
+        
+     
+        <f:facet name="footer">
+            <h:outputText value="Footer" />
+        </f:facet>
+                </h:form>
+            </pm:content>
+                  </pm:view>
+	          </pm:page>  
+</f:view>
+
+ 

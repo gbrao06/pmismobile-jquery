@@ -1,0 +1,77 @@
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+        renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="ChatBlog">
+	<style>
+                .th-groups th {
+                        text-align: center;
+                        background-color: rgba(0,0,0,.1);
+                        border-right: 1px solid #fff;
+                }
+                .ui-li-custom .ui-li-count {
+                        right: 10px !important;
+                        
+                }                
+                
+                
+        </style>        	
+        <pm:view id="ChatBlog" >
+         <pm:content>
+        <pm:header title="#{TopicWebBean.selectedTopicTbl.topicName}" swatch="b" style="background-color: red;color:black">
+        <f:facet name="right">
+                    <p:commandButton value="Teams" icon="gear" action="mteams" />
+                </f:facet>
+         <f:facet name="left">
+                    <p:commandButton value="Mail Box" icon="gear" action="mmessages" />
+                </f:facet>
+        
+         </pm:header>       
+         <h:form>
+    
+    <p:panel header="Post Message">
+            
+              <p:messages id="groupMsg" showDetail="true" life="3000" />  
+    	  
+             
+          <p:inputTextarea  value="#{TopicWebBean.pmimessage}" cols="20" rows="10" />
+ 	      
+            <p:commandButton value="Submit Message" update="groupMsg" style="color:#2F4F4F;" actionListener="#{TopicWebBean.addPmiMessageToSelectedTbl}">	
+          	  </p:commandButton>
+	        
+          
+    </p:panel>                              
+    			
+	  <p:panel header="Old Messages">
+    		
+      <p:dataList id="threadId" value="#{TopicWebBean.selectedTopicTbl.getPmimsgtbls()}"
+	  paginator="true" var="item" bgcolor="#F1F1F1" boarder="0" cellspacing="2"
+	  width="80%" rules="all" editable="true" rowKey="#{item.id}">
+	  
+	      
+          <p>     
+		  <h:outputText value="#{item.getUsertbl().userId}"></h:outputText>			
+		  </p>
+		  <p>   
+		  <h:outputText	value="#{item.getLastUpdated()}"/>			
+			</p>
+			
+		  <p>   
+		  <h:outputText	value="#{item.getPmiMessage()}"/>			
+		  </p>
+		  
+	<p:separator/>
+                </p:dataList>                  
+    </p:panel>
+	    
+          </h:form>
+            </pm:content>
+                  </pm:view>
+	          </pm:page>  
+</f:view>	

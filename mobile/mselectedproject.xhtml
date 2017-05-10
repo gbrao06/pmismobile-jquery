@@ -1,0 +1,174 @@
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+        renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Project">
+	<style>
+                .th-groups th {
+                        text-align: center;
+                        background-color: rgba(0,0,0,.1);
+                        border-right: 1px solid #fff;
+                }
+                .ui-li-custom .ui-li-count {
+                        right: 10px !important;
+                        
+                }                
+                
+        </style>        	
+        <pm:view id="Project" >
+         <pm:content>
+        <pm:header title="#{ProjectStatusWebBean.selectedProjectWrapper.projectTbl.projectName}" swatch="b" style="background-color: red;color:black">
+        <f:facet name="right">
+                    <p:commandButton value="Projects" icon="gear" action="mprojects" />
+                </f:facet>
+        <f:facet name="left">
+                    <p:commandButton value="Gantt" icon="gear" action="mgantt" />
+                </f:facet>
+        
+         </pm:header>       
+         <h:form id="selectedProjectForm">
+            
+            
+        <p:panel header="Select Tasks For Edit,Delete">  
+                     
+	  <p:dataList type="inset" id="dt1" value="#{ProjectStatusWebBean.selectedProjectWrapper.getWbsStatusWrappers(UserWebBean.getCurrentUserTbl())}"
+	  paginator="true" var="item" bgcolor="#F1F1F1" boarder="0" cellspacing="2"
+	  width="100%" rules="all" editable="true" rowKey="#{item.wbsTable}" selectionMode="single">
+	  
+                        <f:attribute name="filter" value="true" />
+                        <f:attribute name="placeholder" value="Search" />
+                        <f:attribute name="autoDividers" value="true" />
+                        <f:attribute name="icon" value="grid" />
+                        <f:attribute name="iconSplit" value="true" />      
+      
+	 
+       <p:commandButton actionListener="#{WbsWebBean.setSelectedWbsTable(item.wbsTbl)}" value="#{item.wbsTbl.tasktbl.taskName}" action="mselectedtask"/>
+		
+		<h:outputText styleClass="ui-li-count" value="#{item.wbsTbl.wbsId}"/>
+		
+      </p:dataList>	       	       
+              
+        </p:panel>  
+	        
+        <p:panel header="Add New Wbs Task">  
+                   
+	    <p:messages id="AllWbsMsg" showDetail="true" life="3000" />  
+   		
+        <h:outputText value="Task Descr." style="background-color:#2F4F4F;color:white;"></h:outputText>
+			
+		<p:inputTextarea value="#{ProjectStatusWebBean.selectedProjectWrapper.newWrapper.taskName}"/>
+		
+		<h:outputText value="Parent WbsID" style="background-color:#2F4F4F;color:white;"></h:outputText>
+		<p:inputTextarea value="#{ProjectStatusWebBean.selectedProjectWrapper.newWrapper.parentWbsId}"/>
+		
+		<h:outputText value="priority:" style="background-color:#2F4F4F;color:white;"></h:outputText>
+	        
+		<p:inputText type="number" value="#{ProjectStatusWebBean.selectedProjectWrapper.newWrapper.priority}"/>
+		
+		<h:outputText value="Assign To:" style="background-color:#2F4F4F;color:white;"></h:outputText>
+	    <p:inputText  value="#{ProjectStatusWebBean.selectedProjectWrapper.newWrapper.assignTo}"/>
+	
+		<h:outputText value="TaskWbsId :" style="background-color:#2F4F4F;color:white;"></h:outputText>
+        <p:inputText value="#{ProjectStatusWebBean.selectedProjectWrapper.newWrapper.taskWbsId}" ></p:inputText>
+    	
+            <h:outputText value="start:mm/dd/yyyy" style="background-color:#2F4F4F;color:white;"></h:outputText>
+	        
+			  <p:calendar value="#{ProjectStatusWebBean.selectedProjectWrapper.newWrapper.startEstimate}" pattern="MM/dd/yyyy" />
+			    
+            <h:outputText value="end:mm/dd/yyyy" style="background-color:#2F4F4F;color:white;"></h:outputText>
+            <p:calendar value="#{ProjectStatusWebBean.selectedProjectWrapper.newWrapper.endEstimate}" pattern="MM/dd/yyyy" />
+			        
+			<h:outputText value="effortsPerDay" style="background-color:#2F4F4F;color:white;"></h:outputText>
+            <p:inputText type="number" value="#{ProjectStatusWebBean.selectedProjectWrapper.newWrapper.effortsPerDay}"/>
+			 
+            <h:commandButton id="addWbsButton" value="Add Task" update="AllWbsMsg"   
+              	 actionListener="#{ProjectStatusWebBean.addWbsTask}">          		 	
+   				</h:commandButton>
+   	 
+        </p:panel>  
+        
+        <p:panel header="Resource Time Management">  
+            <h:panelGrid columns="2" cellpadding="0">  
+                   
+                <h:outputText value="Project Resources Time Efforts" />
+                
+                
+            </h:panelGrid>  
+        </p:panel>  
+        
+        <p:panel header="Bug Management">  
+            <h:panelGrid columns="1" cellpadding="0">  
+                <h:outputText value="Project Issues" />
+                
+                  
+            </h:panelGrid>  
+        </p:panel>  
+        
+        <p:panel header="Risk Management">  
+            <h:panelGrid columns="1" cellpadding="0">  
+                <h:outputText value="Project Risks" />
+                
+                    
+            </h:panelGrid>  
+        </p:panel>
+        
+        <p:panel header="Lessons Learned">  
+            <h:panelGrid columns="1" cellpadding="0">  
+                <h:outputText value="Project Lessons Learned" />
+                
+            </h:panelGrid>  
+        </p:panel>
+        
+        <p:panel header="Process Improvements">  
+            <h:panelGrid columns="1" cellpadding="0">  
+                <h:outputText value="Project Process Improvements" />
+                
+               
+            </h:panelGrid>  
+        </p:panel>
+        
+        <p:panel header="PMO  Mentoring Advise">  
+            <h:panelGrid columns="1" cellpadding="0">  
+                <h:outputText value="PMO Advicer's Advices" />
+               
+            </h:panelGrid>  
+        </p:panel>
+        
+        <p:panel header="Monitoring">  
+            <h:panelGrid columns="1" cellpadding="0">  
+                <h:outputText value="Project Monitoring" />
+                    
+            </h:panelGrid>  
+        </p:panel>
+        
+        <p:panel header="Knowledge Portal">  
+            <h:panelGrid columns="1" cellpadding="0">  
+                <h:outputText value="Project Knowledge Portal" />
+                
+                   
+            </h:panelGrid>  
+        </p:panel>
+        
+        
+        <p:panel header="Action Plan And Open items">  
+            <h:panelGrid columns="1" cellpadding="0">  
+                <h:outputText value="Project Knowledge Portal" />
+                        
+            </h:panelGrid>  
+        </p:panel>
+        
+        
+        <f:facet name="footer">
+            <h:outputText value="Footer" />
+        </f:facet>
+                </h:form>
+            </pm:content>
+                  </pm:view>
+	          </pm:page>  
+</f:view>

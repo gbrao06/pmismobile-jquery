@@ -1,0 +1,67 @@
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+        renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Project">
+	<style>
+                .th-groups th {
+                        text-align: center;
+                        background-color: rgba(0,0,0,.1);
+                        border-right: 1px solid #fff;
+                }
+                .ui-li-custom .ui-li-count {
+                        right: 10px !important;
+                        
+                }                
+                
+        </style>        	
+        <pm:view id="Project" >
+         <pm:content>
+        <pm:header title="Add New Project" swatch="b" style="background-color: red;color:black">
+        <f:facet name="right">
+                    <p:commandButton value="Projects" icon="gear" action="mprojects" />
+                </f:facet>
+        <f:facet name="left">
+                    <p:commandButton value="Teams" icon="gear" action="mteams" />
+                </f:facet>
+        
+         </pm:header>       
+         <h:form id="maddNewProjectForm">
+                    
+		<p:messages id="addProjectMsg" showDetail="true" life="3000" />  
+               
+            <h:outputText value="Project ID :" ></h:outputText>
+            <p:inputText type="number" id="projectId" value="#{ProjectWebBean.project_id}">
+                </p:inputText>
+ 			
+            <h:outputText value="Project Name :"></h:outputText>
+            
+            <p:inputText id="project_name" value="#{ProjectWebBean.project_name}">
+            </p:inputText>
+ 	            
+ 	         <h:outputText  name="id" value="Project Description :"> </h:outputText>
+				
+ 	          <p:inputTextarea id="project_description" value="#{ProjectWebBean.project_description}"  >
+ 	          
+ 	    		</p:inputTextarea>
+ 	            
+           
+    	 <f:facet name="header">
+		 </f:facet>
+	        
+         <h:commandButton id="addProjectButton" value="Add Project" update="addProjectMsg"   
+                    actionListener="#{ProjectPermissionWebBean.addProject}" action="mprojects">              	
+        		
+        	</h:commandButton>	
+    
+                    </h:form>
+            </pm:content>
+                  </pm:view>
+	          </pm:page>  
+</f:view>

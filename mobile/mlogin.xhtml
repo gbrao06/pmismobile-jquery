@@ -1,0 +1,56 @@
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+        renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Login">
+	<style>
+                .th-groups th {
+                        text-align: center;
+                        background-color: rgba(0,0,0,.1);
+                        border-right: 1px solid #fff;
+                }
+                .ui-li-custom .ui-li-count {
+                        right: 10px !important;
+                        
+                }                
+                
+                
+        </style>        	
+        <pm:view id="Login" >
+         <pm:content>
+        <pm:header title="Login" swatch="b" style="background-color: red;color:black">
+         </pm:header>       
+         <h:form id="mLoginForm">
+      	
+      <p:panel>
+      	<p:messages id="loginMsg" showDetail="true" life="3000" />  
+      
+            <p:outputLabel  value="Username:" />  
+            <p:inputText value="#{LoginWebBean.user_id}"   
+                    id="username" required="true" style="width:80px;"/>  
+              
+            <p:outputLabel  value="Password:" />  
+            <h:inputSecret value="#{LoginWebBean.pass_wd}"   
+                    id="password" required="true" style="width:80px;"/>  
+              
+			<p:commandLink id="loginButton" value="Login" update="loginMsg"    
+                    actionListener="#{LoginWebBean.login}"   
+                      action="mteams"/>          
+                  
+          
+       </p:panel>   
+						
+                </h:form>
+            </pm:content>
+                  </pm:view>
+	          </pm:page>  
+</f:view>
+
+
+

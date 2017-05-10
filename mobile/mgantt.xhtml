@@ -1,0 +1,433 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+        renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Gantt">
+	        	
+<head>
+    <title>PmisPro Gantt Chart</title>
+    <link type="text/css" rel="stylesheet" href="/../codebase/dhtmlxgantt.css"/>
+    <script type="text/javascript" src="../codebase/dhtmlxcommon.js"></script>
+    <script type="text/javascript"  src="../codebase/dhtmlxgantt.js"></script>
+    <script type="text/javascript"  src="../date.js"></script>
+    <script type="text/javascript"  src="../codebase/FileSaver.js"></script>
+    <script type="text/javascript"  src="../codebase/Blob.js"></script>
+
+<style>
+                .th-groups th {
+                        text-align: center;
+                        background-color: rgba(0,0,0,.1);
+                        border-right: 1px solid #fff;
+                }
+   body {font-size:12px}
+	.{font-family:arial;font-size:12px}
+	h1 {cursor:hand;font-size:16px;margin-left:10px;line-height:10px}
+	xmp {color:green;font-size:12px;margin:0px;font-family:courier;background-color:#e6e6fa;padding:2px}
+	.hdr{
+		background-color:lightgrey;
+		margin-bottom:0px;
+		padding-left:0px;
+	}
+    </style>
+    
+<script  type="text/javascript">
+    /*<![CDATA[*/
+               
+    function createChartControl(htmlDiv1)
+    {
+    	
+    	var fileContent=null;
+    	fileContent='${ProjectStatusWebBean.buildXmlDomStr()}';
+    	
+    	projectName=null;
+    	projectName='${ProjectStatusWebBean.getSelectedProjectTable().getProjectName()}';
+    	
+       	if (window.DOMParser)
+       	  {
+       		
+       		parser=new DOMParser();
+       	  
+       		xmlDoc=parser.parseFromString(fileContent,"text/xml");
+       	  }
+       	else // Internet Explorer
+       	  {
+       		
+       		xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+       	  	xmlDoc.async=false;
+       	  	xmlDoc.loadXML(text); 
+       	  } 
+     	
+       	x=xmlDoc.getElementsByTagName("WBS");
+     	wbsList=new Array();//globals
+     	
+     	gList=new Array();//globals
+     	
+     	for (i=0;i<x.length;i++)
+       	{
+     		var wbs=processWbsNode(x[i]);
+     		if(wbs)
+     		{
+     			wbsList[i]=wbs;
+     			var diff=wbs.estimatedTaskDays;
+     			var estimatedEfforts=diff*wbs.taskHrsPerDay;
+     			
+     			gList[i]=new GanttTaskInfo(wbs.localId,wbs.taskname,wbs.plannedstart, wbs.taskhrs, wbs.percentcomplete, "",wbs.wbsId,wbs.priority,wbs.actualWorkHrs,wbs.percentWorkCompleted,wbs.assignedTo,wbs.taskHrsPerDay,wbs.estimatedTaskDays);
+     			
+     			//document.write(gList[i].estimatedEfforts);
+     	
+     		}
+       	}
+	
+        //project 1
+        //create parent child relation
+	var parents=new Array();
+	var pdx=0;
+
+   	this.projectStart=new Date();
+    if(wbsList.length>0)
+    	this.projectStart=wbsList[0].plannedstart;
+    
+  //var project1 = new GanttProjectInfo(1, projectName, new Date(2013, 4, 01));
+    project1 = new GanttProjectInfo(1, projectName, this.projectStart);    
+	//now attach parents to projects
+	for(i=0;i<wbsList.length;i++)
+	{
+		if(wbsList[i].parentId=='0')
+			project1.addTask(gList[i]);
+	}
+	
+	for(i=0;i<wbsList.length;i++)
+	{
+		var list=new Array();
+		var idx=0;
+		
+		for(j=0;j<wbsList.length;j++)
+		{
+			if(wbsList[i].localId==wbsList[j].parentId)
+    		{
+    		
+    			//list[idx++]=new GanttTaskInfo(wbsList[j].localId,wbsList[j].taskname,wbsList[j].plannedstart,wbsList[j].taskhrs,wbsList[j].percentcomplete, "",wbsList[j].wbsId,wbsList[j].priority,wbsList[j].actualWorkHrs,wbsList[j].percentWorkCompleted);
+    			list[idx++]=j;
+    			if(this.projectStart>=wbsList[j].plannedstart)
+    				this.projectStart=wbsList[j].plannedstart;
+    				
+    		}
+			
+		}
+	//	document.write("X"+list.length);
+		for(j=0;j<list.length;j++)
+		{
+			//gList[i] is the ganttTaskInfo and list contains gantttasks
+			var k=list[j];
+			gList[i].addChildTask(gList[k]);//gList[i] is the parent,gList[k] is the child
+			var strn='parent:';
+			strn+=gList[i].Id;
+			strn+=':';
+			strn+='child:';
+			strn+=gList[k].Id;
+			
+			strn+='<br/>';
+			//document.write(strn);
+			
+		}
+		//document.write("children length of"+gList[i].Id+":"+gList[i].ChildTasks.length+"<br/>");
+		
+	}
+	
+        var ganttChartControl = new GanttChart();
+        ganttChartControl.setImagePath("codebase/imgs/");
+        ganttChartControl.setEditable(true);
+
+      //  ganttChartControl.addProject(project1);
+
+      //  ganttChartControl.create(htmlDiv1);
+        
+      //newly added
+		
+		ganttChartControl.showTreePanel(true);
+		ganttChartControl.showContextMenu(true);
+		ganttChartControl.showDescTask(true,'d,s-f');
+		ganttChartControl.showDescProject(true,'n,d');
+		//newly added
+        ganttChartControl.addProject(project1);
+
+        ganttChartControl.create(htmlDiv1);
+
+    }
+
+    function WbsNode(localId,taskname,plannedstartDt,taskhrs,percentcomplete,parentId,wbsId,priority,actualWorkHrs,percentWorkCompleted,assignedTo,taskhrsperday,estimatedtaskdays,projectid)
+    {
+    	
+    	this.localId=localId;
+    	this.taskname=taskname;
+    	
+    	this.plannedstart=plannedstartDt;
+    	this.taskhrs=taskhrs;
+    	
+    	this.percentcomplete=percentcomplete;
+  		
+    	this.parentId = parentId;
+		this.wbsId=wbsId;
+		this.priority=priority;
+		this.actualWorkHrs=actualWorkHrs;
+		this.percentWorkCompleted=percentWorkCompleted;
+		this.assignedTo=assignedTo;
+		this.taskHrsPerDay=taskhrsperday;
+		this.estimatedTaskDays=estimatedtaskdays;
+		this.projectId=projectid;
+    }
+    
+    function processWbsNode(node)
+    {
+    	//0-projectid,1-wbsid,2-taskname,3-priority,4-plannedstart_year,5-plannedstart_month,6,plannedstart_day,
+    	//7-taskhours,8-percentcomplete,
+		//10-actualworkhours,11-percentworkcomplete,12-assignedto,13-id,14-parentid
+		
+    	if(node==null)
+    		return null;
+    	
+    	var localid=node.childNodes[13].childNodes[0].nodeValue;
+    	var taskname=node.childNodes[2].childNodes[0].nodeValue;
+    	var plannedstartyear=node.childNodes[4].childNodes[0].nodeValue;
+    	
+    	var plannedstartmonth=node.childNodes[5].childNodes[0].nodeValue;
+    	var plannedstartday=node.childNodes[6].childNodes[0].nodeValue;
+    	
+    	var parentId=node.childNodes[14].childNodes[0].nodeValue;
+    	
+    	var startDt=new Date();
+    	startDt.setFullYear(plannedstartyear,plannedstartmonth,plannedstartday);
+    	
+    	
+    	var taskhrs=node.childNodes[7].childNodes[0].nodeValue;
+    	var percentcomplete=node.childNodes[8].childNodes[0].nodeValue;
+    	var wbsId=node.childNodes[1].childNodes[0].nodeValue;
+    	var priority=node.childNodes[3].childNodes[0].nodeValue;
+    	var actualWorkHrs=node.childNodes[10].childNodes[0].nodeValue;
+    	var percentWorkCompleted=node.childNodes[11].childNodes[0].nodeValue;
+    	var assignedTo=node.childNodes[12].childNodes[0].nodeValue;
+    	var taskhrsperday=node.childNodes[15].childNodes[0].nodeValue;
+    	var estimatedtaskdays=node.childNodes[16].childNodes[0].nodeValue;
+    	
+    	var projectid=node.childNodes[0].childNodes[0].nodeValue;
+    	
+    	var wbs=new WbsNode(localid,taskname,startDt,taskhrs,percentcomplete,parentId,wbsId,priority,actualWorkHrs,percentWorkCompleted,assignedTo,taskhrsperday,estimatedtaskdays,projectid);
+    	return wbs;    	
+  }
+    
+    function getWbsDomStr(wbs,gtask)
+    {
+		openElement("WBS");
+		createElement("projectid",wbs.projectId);
+		createElement("wbsid",wbs.wbsId);
+		createElement("taskname",wbs.taskname);
+		createElement("priority",wbs.priority);
+		
+		var estimatedDays=wbs.estimatedTaskDays;
+		//calculate estimatedDays based on new duration
+		var newEstimatedDays=gtask.Duration/8;
+		
+		var newStart=gtask.EST;
+		var planned_start_year=newStart.getYear();
+		var planned_start_month=newStart.getMonth();
+		var planned_start_date=newStart.getDate();
+		
+		var assignedto=wbs.assignedTo;
+			
+		var startDt=new Date();
+		
+    	startDt.setFullYear(planned_start_year,planned_start_month,planned_start_date);
+    	//alert("Start:"+startDt.getYear());
+    	var endDt=new Date(startDt);
+    	//startDt.setFullYear(planned_start_year,planned_start_month,planned_start_date);
+    	//alert("start Date Is:"+endDt);
+    	endDt.setDate(endDt.getDate()+newEstimatedDays);
+		//alert("end Date Is:"+endDt);
+		
+		//	var tomorrow=new Date();
+	//	tomorrow.setDate(today.getDate()+10);
+	//	var year=tomorrow.getYear();
+	//	year+=1900;
+		//alert("End"+endDt.getYear());
+		//get the Initial Duration and final duration 
+		
+		var year=startDt.getYear();
+		var number=1900+1900;
+		var year1=year+number;
+		
+		//alert("start:"+year+"::"+year1);
+		createElement("plannedstart_year",year1);
+		createElement("plannedstart_month",startDt.getMonth());
+		createElement("plannedstart_day",startDt.getDate());
+				
+		var year2=endDt.getYear()+number;
+		//alert("end:"+year2);
+		createElement("plannedend_year",year2);
+		createElement("plannedend_month",endDt.getMonth());
+		createElement("plannedend_day",endDt.getDate());
+		
+		createElement("id",gtask.Id);
+		if(gtask.ParentTask!=null)
+			createElement("parentid",gtask.ParentTask.Id);
+		else
+			createElement("parentid","null");
+		
+		createElement("estimateddays",newEstimatedDays);
+		
+		createElement("assignedto",assignedto);
+		
+		closeElement("WBS");
+		
+		//this.localId=localId;
+    	//this.taskname=taskname;
+    	
+    	//this.plannedstart=plannedstartDt;
+    	//this.taskhrs=taskhrs;
+    	
+    	//this.percentcomplete=percentcomplete;
+  		
+    	//this.parentId = parentId;
+		//this.wbsId=wbsId;
+		//this.priority=priority;
+		//this.actualWorkHrs=actualWorkHrs;
+		//this.percentWorkCompleted=percentWorkCompleted;
+		//this.assignedTo=assignedTo;
+		//this.taskHrsPerDay=taskhrsperday;
+		//this.estimatedTaskDays=estimatedtaskdays;
+		
+    }
+    
+    function handleWbsUpdate()
+    {
+    	//alert(wbsList[5].taskhrs);
+    	//alert(gList[5].Duration);
+    	//1.create new xml from new data
+    	//2.send across the xml to WbsTreeWebBeanManager to build tree
+    	//3.WbsTreeWebBeanManager to update the tables.
+    	
+    	domStr='<?xml version="1.0" encoding="UTF-8"?>';
+    	openElement("ProjectWBS");
+    	for(i=0;i<gList.length;i++)
+    	{
+    		getWbsDomStr(wbsList[i],gList[i]);
+    	}
+    	closeElement("ProjectWBS");
+    	//alert(domStr);
+    	//hidden();
+    	//document.write(domStr);
+    	//var bb = new BlobBuilder();
+    	//bb.append(domStr);
+    	//var fileSaver = window.saveAs(bb.getBlob("text/plain;charset=UTF-8"), "wbs.txt");
+    	var fName="wbs_";
+    	fName+=projectName;
+    	fName+=".txt";
+    	var blob = new Blob([domStr], {type: "text/plain;charset=utf-8"});
+		saveAs(blob, fName);
+	
+    	//var oMyBlob = new Blob([domStr], { type : "text/plain", endings: "transparent"});
+    	//window.saveAs(oMyBlob, "wbs.txt");
+    	
+    }
+
+    function openElement(name)
+    {
+    	domStr+="<";
+    	domStr+=name;
+    	domStr+=">"
+    	
+    	return domStr;
+    }
+
+    function closeElement(name)
+    {
+
+    	domStr+="</"
+    	domStr+=name;
+    	domStr+=">";
+    	
+    	return domStr;
+    }
+    
+    function createElement(name,value)
+    {
+    	openElement(name);
+    	
+    	if(value!='null')
+    		domStr+=value;
+    	
+    	closeElement(name);
+    	return domStr;
+    }
+    function createDateElement(name,value)
+    {
+    	openElement(name);
+    	var val=value+1900;
+    	if(value!='null'){
+    		domStr+=val;
+    	}
+    		
+    	
+    	closeElement(name);
+    	return domStr;
+    }
+
+    function handleRefresh()
+    {
+    	
+    }
+    
+    /*]]>*/
+
+    </script>
+
+
+</head>
+	 
+ <pm:view id="Gantt" >
+       <pm:content>
+        <pm:header title="Gantt" swatch="b" style="background-color: red;color:black">
+		<f:facet name="right">
+                    <p:commandButton value="Projects" icon="gear" action="mprojects" />
+                </f:facet>
+        <f:facet name="left">
+                    <p:commandButton value="Teams" icon="gear" action="mteams" />
+                </f:facet>        
+         </pm:header>       
+        
+<body onload="createChartControl('GanttDiv');">
+
+	    <p>  
+ 		<h:outputText value="ProjectID:" style="background-color:#white;color:green"></h:outputText>
+  		
+  		<h:outputText value="#{ProjectStatusWebBean.getSelectedProjectTable().getProjectId()}" style="background-color:#2F4F4F;color:white"></h:outputText>
+  		</p>
+  		<p>
+  		<h:outputText value="Project Name:" style="background-color:#white;color:green"></h:outputText>
+  		<h:outputText value="#{ProjectWebBean.getProjectName(ProjectStatusWebBean.getSelectedProjectTable().getProjectId())}" style="background-color:#2F4F4F;color:white"></h:outputText>
+  		</p>
+<a data-role="button" href="javascript:handleWbsUpdate();">saveToFile</a>
+
+<h4> This is 3rd party component. Commercial License policy will be followed on other than demo projects. Duration is calculated on 8hrs per day basis. And is only used for charting purpose. (1) effortsPerDay, (2) EST, EFT are actually being considered to caluclate estimated total  efforts.
+	Click refresh link to work with left/right keys</h4>    	 
+ 	
+ 	<a data-role="button" href="javascript:handleRefresh();">refresh</a>
+    <br/>
+    
+    <br/>	    	    
+       
+<br/>
+	<div style="width:100%;height:710px;position:absolute;" id="GanttDiv"></div>
+    
+</body>
+	
+
+</pm:content>
+</pm:view>
+</pm:page>
+</f:view>
+

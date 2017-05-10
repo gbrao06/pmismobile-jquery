@@ -1,0 +1,62 @@
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+        renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="SendMessage">
+	<style>
+                .th-groups th {
+                        text-align: center;
+                        background-color: rgba(0,0,0,.1);
+                        border-right: 1px solid #fff;
+                }
+                .ui-li-custom .ui-li-count {
+                        right: 10px !important;
+                        background-color: rgba(0,1,0,.1);
+                }                
+        		
+        </style>        	
+        <pm:view id="SendMessage" >
+          
+        <pm:header title="SendMessage" swatch="b" style="background-color: red;color:black">
+        <f:facet name="right">
+                    <p:commandButton value="Mail Box" icon="gear" action="mmessages" />
+                </f:facet>
+        <f:facet name="left">
+                    <p:commandButton value="Teams" icon="gear" action="mteams" />
+                </f:facet>
+        
+         </pm:header>
+        <pm:content>
+        <h:form >                
+	   
+	   <p:dataList type="inset" id="dt1" value="#{TeamMemberWebBean.getAllBuddies()}"
+	  paginator="true" var="item" bgcolor="#F1F1F1" boarder="0" cellspacing="2"
+	  width="80%" rules="all" editable="true" rowKey="#{item}" selectionMode="single">
+	  
+                        <f:attribute name="filter" value="true" />
+                        <f:attribute name="placeholder" value="Search" />
+                        <f:attribute name="autoDividers" value="true" />
+                        <f:attribute name="icon" value="grid" />
+                        <f:attribute name="iconSplit" value="true" />      
+       <p:messages id="sendMsg" showDetail="true" life="3000" />  
+	   <p>
+	   <h:outputText value="Select Receiver:"></h:outputText>
+       </p>			
+       <p:commandButton actionListener="#{PeerMessageWebBean.newWrapper.setReceiver(item)}" update="sendMsg" value="#{item}" action="mselectedmember"/>
+		
+    </p:dataList>
+       	 
+			 <f:facet name="header">
+		 </f:facet>
+		 </h:form>
+	          </pm:content>
+	          </pm:view>
+	          </pm:page>  
+</f:view>
+

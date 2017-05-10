@@ -1,0 +1,77 @@
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+        renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Task">
+	<style>
+                .th-groups th {
+                        text-align: center;
+                        background-color: rgba(0,0,0,.1);
+                        border-right: 1px solid #fff;
+                }
+                .ui-li-custom .ui-li-count {
+                        right: 10px !important;
+                        
+                }                
+                
+                
+        </style>        	
+        <pm:view id="Task" >
+         <pm:content>
+        <pm:header title="#{WbsWebBean.selectedWbsWrapper.wbsTable.tasktbl.taskName}" swatch="b" style="background-color: red;color:black">
+        <f:facet name="right">
+                    <p:commandButton value="Tasks" icon="gear" action="mtasks" />
+                </f:facet>
+         <f:facet name="left">
+                    <p:commandButton value="Projects" icon="gear" action="mprojects" />
+              	      
+              
+                </f:facet>
+        
+         </pm:header>       
+         <h:form id="selectedTaskForm">
+    			
+			<p:messages id="editSelecetdTaskMsg" showDetail="true" life="3000" />  
+            	
+    			<h:outputText value="eStart:MM/dd/yyyy" style="background-color:#2F4F4F;color:white;"></h:outputText>
+    			
+    			<p:calendar value="#{WbsWebBean.selectedWbsWrapper.updateParams.startEstimate}" pattern="MM/dd/yyyy" />
+			
+    			<h:outputText value="eEnd:MM/dd/yyyy" style="background-color:#2F4F4F;color:white;"></h:outputText>
+    			<p:calendar value="#{WbsWebBean.selectedWbsWrapper.updateParams.endEstimate}" pattern="MM/dd/yyyy" />
+			
+    			<h:outputText value="priority:" style="background-color:#2F4F4F;color:white;"></h:outputText>
+    			<p:inputText type="number" value="#{WbsWebBean.selectedWbsWrapper.updateParams.priority}"></p:inputText>
+				
+    			<h:outputText value="status:" style="background-color:#2F4F4F;color:white;"></h:outputText>
+    			<p:inputText  value="#{WbsWebBean.selectedWbsWrapper.updateParams.status}"></p:inputText>
+				
+    			<h:outputText value="effortsPerDay:" style="background-color:#2F4F4F;color:white;"></h:outputText>
+    			<p:inputText  type="number" value="#{WbsWebBean.selectedWbsWrapper.updateParams.effortsPerDay}"></p:inputText>
+    			
+    			<h:outputText value="projectName:" style="background-color:#2F4F4F;color:white;"></h:outputText>
+    			<h:outputText value="#{WbsWebBean.selectedWbsWrapper.wbsTable.projecttbl.projectName}"></h:outputText>
+    			
+    		<pm:buttonGroup orientation ="horizontal">
+    		<p:commandButton id="saveTaskButton" value="Save" update="editSelecetdTaskMsg"   
+                    actionListener="#{WbsWebBean.updateSelectedWbsTask}" action="mtasks">              	
+        	
+        	</p:commandButton>          
+        	<p:commandButton id="deleteTaskButton" value="Delete" update="editSelecetdTaskMsg"   
+                    actionListener="#{WbsWebBean.deleteSelectedWbsTask}"  action="mtasks">              	
+        	
+        	</p:commandButton>          
+        
+    		</pm:buttonGroup>
+            	
+                </h:form>
+            </pm:content>
+                  </pm:view>
+	          </pm:page>  
+</f:view>

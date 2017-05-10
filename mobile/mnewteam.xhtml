@@ -1,0 +1,50 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+        renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="NewTeam">
+	<style>
+                .th-groups th {
+                        text-align: center;
+                        background-color: rgba(0,0,0,.1);
+                        border-right: 1px solid #fff;
+                }
+                .ui-li-custom .ui-li-count {
+                        right: 10px !important;
+                        background-color: rgba(0,1,0,.1);
+                }                
+        		
+        </style>        	
+        <pm:view id="NewTeam" >
+          
+        <pm:header title="NewTeam" swatch="b" style="background-color: red;color:black">
+        <f:facet name="right">
+                    <p:commandButton value="Mail Box" icon="gear" action="mmessages" />
+                </f:facet>
+        <f:facet name="left">
+                    <p:commandButton value="Teams" icon="gear" action="mteams" />
+                </f:facet>
+        
+         </pm:header>
+        <pm:content>
+        <h:form >                
+	   
+         	<p:messages id="addTeamMsg" showDetail="true" life="3000" />  
+                    
+            <h:outputText value="Team Name:" ></h:outputText>	    			    	
+			<h:inputText value="#{TeamWebBean.newAddTeamWrapper.teamName}"/>  
+        	
+             <p:commandButton value="Save" update="addTeamMsg" actionListener="#{TeamWebBean.newAddTeamWrapper.addNewTeam}" action="mteams"/>
+
+		 <f:facet name="header">
+		 </f:facet>
+		 </h:form>
+	          </pm:content>
+	          </pm:view>
+	          </pm:page>  
+</f:view>
